@@ -38,6 +38,6 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 
 clean:
 	@echo "Cleaning..."
-	@$(RM) -rf $(BUILDDIR) $(EXECDIR) $(SHAREDIR) ./recs
+	@$(RM) -rf $(BUILDDIR) $(EXECDIR) $(SHAREDIR)
 
 .PHONY: clean
