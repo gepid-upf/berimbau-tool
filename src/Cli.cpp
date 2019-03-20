@@ -25,6 +25,7 @@
 
 #include <Cli.h>
 #include <BerimbauTool.h>
+#include <esptool.h>
 
 #include <cstring>
 #include <cctype>
@@ -42,11 +43,13 @@ int Cli::run(int &argc, char *argv[])
     case Option::CREATE:
         ret = create_rec();
         break;
+    case Option::DUMP:
+        ret = dump_flash();
+        break;
     default:
         ret = -4;
         break;
     }
-    
 
     return ret;
 }
@@ -58,15 +61,16 @@ int Cli::parse_args(int &argc, char *argv[])
         return -1;
     }
 
-    for(int i = 0; i < argc; i++){
-        if(!strcmp(argv[1], "create")){
-            opt = Option::CREATE;
-        } else {
-            std::cout << "Opção inválida!" << std::endl << std::endl;
-            print_usage();
-            return -2;
-        }
+    if(!strcmp(argv[1], "create")){
+        opt = Option::CREATE;
+    } else if(!strcmp(argv[1], "dump")){
+        opt = Option::DUMP;
+    } else {
+        std::cout << "Opção desconhecida!" << std::endl << std::endl;
+        print_usage();
+        return -2;
     }
+    
 
     if(opt == Option::CREATE){
         if(argc != 3){
@@ -76,6 +80,10 @@ int Cli::parse_args(int &argc, char *argv[])
         } else {
             fname = argv[2];
         }
+    } else if(opt == Option::DUMP && argc > 2){
+        std::cout << "Dump não toma nenhum argumento" << std::endl << std::endl;
+        print_usage();
+        return -4;
     }
 
     return 0;
@@ -115,5 +123,20 @@ int Cli::create_rec()
         ret = -1;
         break;
     }
+    return ret;
+}
+
+int Cli::dump_flash()
+{
+    int ret = BerimbauTool::dump();
+    switch(ret){
+    case 0:
+        std::cout << std::endl << "Imagem gravada" << std::endl;
+        break;
+    default:
+        std::cout << std::endl << "Erro: " << ESPTool::get_err_msg() << std::endl;
+        break;
+    }
+
     return ret;
 }

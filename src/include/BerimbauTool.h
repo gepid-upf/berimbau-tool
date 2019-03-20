@@ -89,7 +89,18 @@ public:
      */
     static std::string get_error_value() { return line_value; }
 
+    /**
+     * @brief Dumps the whole flash SPIFFS partition to ./img/
+     * 
+     * @return 0 if success
+     *         Refer to ESPTool::read_flash(int, char**) for errors.
+     */
+    static int dump();
+
 private:
+    static const uint32_t START_ADDR = 0x210000;
+    static const uint32_t PART_SIZE  = 0x1effff;
+
     static unsigned int line_no;
     static std::string line_value;
 };

@@ -25,6 +25,8 @@
 
 #include <BerimbauTool.h>
 #include <Utils.h>
+#include <esptool.h>
+
 #include <fstream>
 #include <sstream>
 #include <filesystem>
@@ -104,4 +106,9 @@ int BerimbauTool::create(std::string &fname)
     rec.close();
 
     return 0;
+}
+
+int BerimbauTool::dump()
+{
+    return ESPTool::read_flash(START_ADDR, PART_SIZE, "partition.bin");
 }

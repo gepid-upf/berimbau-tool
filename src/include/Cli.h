@@ -47,7 +47,8 @@ private:
      * Controls the parsed options
      */
     enum class Option {
-        CREATE
+        CREATE,
+        DUMP
     };
 
     static Option opt;
@@ -63,6 +64,7 @@ private:
      *         -1 if invalid parameter.
      *         -2 if invalid option.
      *         -3 if no input file specified.
+     *         -4 if invalid arg for option.
      */
     static int parse_args(int &argc, char *argv[]);
 
@@ -78,6 +80,14 @@ private:
      *         Refer to BerimbauTool::create() for error codes.
      */
     static int create_rec();
+
+    /**
+     * @brief Recovers from flash entire image of SPIFFS
+     * 
+     * @return 0 if success.
+     *         Refer to BerimbauTool::dump() for error codes.
+     */
+    static int dump_flash();
 
 };
 
