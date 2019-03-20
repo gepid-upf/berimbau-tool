@@ -15,10 +15,19 @@ SRCEXT := cpp
 SOURCES := $(wildcard $(SRCDIR)/*.$(SRCEXT))
 OBJECTS := $(addprefix $(BUILDDIR)/,$(notdir $(SOURCES:.$(SRCEXT)=.o)))
 CFLAGS := -g -Wall -std=c++17
-LDFLAGS := -lstdc++fs
+LDFLAGS := -lstdc++fs -lpython2.7
 INCLUDES := -I./$(SRCDIR)/include -std=c++17
 
-all: $(TARGET)
+all: $(TARGET) mkspiffs cpmkspiffs
+
+mkspiffs:
+	@echo "Building mkspiffs"
+	@make -C mkspiffs/make dist
+
+cpmkspiffs:
+	@echo "Copying spiffs to binary folder"
+	@$(MK) -p $(EXECDIR)
+	@$(CP) mkspiffs/mkspiffs $(EXECDIR)/mkspiffs
 
 buildrun: all
 	./$(TARGET)
@@ -39,5 +48,6 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 clean:
 	@echo "Cleaning..."
 	@$(RM) -rf $(BUILDDIR) $(EXECDIR) $(SHAREDIR)
+	@$(RM) mkspiffs/mkspiffs
 
 .PHONY: clean
