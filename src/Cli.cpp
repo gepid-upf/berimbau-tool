@@ -49,6 +49,9 @@ int Cli::run(int &argc, char *argv[])
     case Option::EXPORT:
         ret = export_rec();
         break;
+    case Option::FLASH:
+        ret = flash_esp();
+        break;
     default:
         ret = -4;
         break;
@@ -70,6 +73,8 @@ int Cli::parse_args(int &argc, char *argv[])
         opt = Option::DUMP;
     } else if(!strcmp(argv[1], "export")){
         opt = Option::EXPORT;
+    } else if(!strcmp(argv[1], "flash")){
+        opt = Option::FLASH;
     } else {
         std::cout << "Opção desconhecida!" << std::endl << std::endl;
         print_usage();
@@ -85,8 +90,8 @@ int Cli::parse_args(int &argc, char *argv[])
         } else {
             fname = argv[2];
         }
-    } else if(opt == Option::DUMP && argc > 2){
-        std::cout << "Dump não toma nenhum argumento" << std::endl << std::endl;
+    } else if((opt == Option::DUMP || opt == Option::FLASH) && argc > 2){
+        std::cout << "Número de argumentos incorreto" << std::endl << std::endl;
         print_usage();
         return -4;
     }
@@ -178,6 +183,21 @@ int Cli::export_rec()
         break;
     default:
         std::cout << "Erro desconhecido" << std::endl;
+        break;
+    }
+
+    return ret;
+}
+
+int Cli::flash_esp()
+{
+    int ret = BerimbauTool::flash();
+    switch(ret){
+    case 0:
+        std::cout << std::endl << "Memória gravada com sucesso" << std::endl;
+        break;
+    default:
+        std::cout << std::endl << "Erro: " << ESPTool::get_err_msg() << std::endl;
         break;
     }
 

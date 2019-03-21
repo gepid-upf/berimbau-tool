@@ -30,9 +30,7 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <sys/stat.h>
+#include <cstring>
 
 unsigned int BerimbauTool::line_no = 0;
 std::string BerimbauTool::line_value;
@@ -117,26 +115,10 @@ int BerimbauTool::dump()
     if((ret = ESPTool::read_flash(START_ADDR, PART_SIZE, "partition.bin")))
         return ret;
 
-    int pid = fork();
-    if(!pid){
-        exit(execlp("./bin/mkspiffs", "mkspiffs", "-u", "img",
-                    "-b", "4096", "-p", "256", "-s", std::to_string(PART_SIZE).c_str(),
-                    "partition.bin", nullptr));
-    } else {
-        int status;
-        pid = waitpid(pid, &status, 0);
-
-        if(pid < 0)
-            return 6; // Wait error
-       
-        if((ret = WEXITSTATUS(status)))
-            return ret | 0xF0;
-    }
 
     return ret;
 }
 
-#include <iostream>
 int BerimbauTool::merge(std::string filename)
 {
     if(!std::filesystem::exists(filename))
@@ -155,4 +137,23 @@ int BerimbauTool::merge(std::string filename)
     }
 
     return 0;       
+}
+
+int BerimbauTool::flash()
+{
+    char buffer[10];
+    strcpy(buffer, std::to_string(PART_SIZE).c_str());
+
+    char *argv[] = {"./bin/mkspiffs",
+                    "-c", "./img",
+                    "-b", "4096",
+                    "-p", "256",
+                    "-s", buffer,
+                    "partition.bin", nullptr };
+
+    int ret = 0;
+    if((ret = Utils::call_and_wait(argv)))
+        return ret;
+
+    return ESPTool::write_flash(START_ADDR, "partition.bin");
 }

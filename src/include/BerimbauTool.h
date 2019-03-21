@@ -112,6 +112,17 @@ public:
      */
     static int merge(std::string filename);
 
+    /**
+     * @brief Creates a flash image and writes to ESP32 memory.
+     * 
+     * @return 0 if success.
+     *         6 if wait for mkspiffs error
+     *         0xF0 added to mkspiffs exit code if error in the child process.
+     *         255 if no mkspiffs found.
+     *         Refer to ESPTool::read_flash(int, char**) for errors.
+     */
+    static int flash();
+
 private:
     static const uint32_t START_ADDR = 0x210000;
     static const uint32_t PART_SIZE  = 0x1f0000;

@@ -70,11 +70,34 @@ int ESPTool::read_flash(uint32_t address, uint32_t size, std::string filename)
     return run_esptool(5, argv);
 }
 
+int ESPTool::write_flash(uint32_t address, std::string filename)
+{
+    std::string esptool = get_esptool();
+    if(esptool.empty()){
+        err_msg = "esptool.py not found";
+        return 1;   // Not found.
+    }
+
+    long unsigned int lens[] = {esptool.size(), std::string("write_flash").size(),
+                                std::to_string(address).size(), filename.size() };
+
+    char *argv[4];
+    for(int i = 0; i < 4; i++)
+        argv[i] = new char[lens[i]];
+    
+    strcpy(argv[0], esptool.c_str());
+    strcpy(argv[1], "write_flash");
+    strcpy(argv[2], std::to_string(address).c_str());
+    strcpy(argv[3], filename.c_str());
+
+    return run_esptool(4, argv);
+}
+
 int ESPTool::run_esptool(int argc, char *argv[])
 {
     Py_Initialize();
 
-    PySys_SetArgv(5, argv); // Sets esptool.py path and args
+    PySys_SetArgv(argc, argv); // Sets esptool.py path and args
 
     // Import whole esptool.py
     PyObject *src = PyString_FromString("esptool");

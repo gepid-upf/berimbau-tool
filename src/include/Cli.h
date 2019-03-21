@@ -49,7 +49,8 @@ private:
     enum class Option {
         CREATE,
         DUMP,
-        EXPORT
+        EXPORT,
+        FLASH
     };
 
     static Option opt;
@@ -98,6 +99,13 @@ private:
      */
     static int export_rec();
 
+    /**
+     * @brief Flash the ESP32 with the files present in the img folder.
+     * 
+     * @return 0 if success.
+     *         Refer to BerimbauTool::flash() for error codes.
+     */
+    static int flash_esp();
 };
 
 #endif /* _CLI_H_ */

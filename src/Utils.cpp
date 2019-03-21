@@ -1,4 +1,6 @@
 #include <Utils.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 const std::vector<std::string> Utils::str_explode(const std::string& str, const char& separator)
 {
@@ -24,4 +26,20 @@ bool Utils::str_is_integer(const std::string &str)
     strtol(str.c_str(), &p, 10) ;
 
     return (*p == 0);
+}
+
+int Utils::call_and_wait(char *argv[])
+{
+    int pid = fork();
+    if(!pid){
+        exit(execvp(argv[0], argv));
+    } else {
+        int status;
+        pid = waitpid(pid, &status, 0);
+
+        if(pid < 0)
+            return pid; // Wait error
+       
+        return WEXITSTATUS(status);
+    }
 }

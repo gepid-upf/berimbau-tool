@@ -34,7 +34,7 @@
 class ESPTool {
 public:
     /**
-     * @brief Equivalent of 'esptool.py read_flash addres size filename'
+     * @brief Equivalent of 'esptool.py read_flash address size filename'
      * 
      * @details Creates an image from ESP flash and saves to filename.
      * 
@@ -47,6 +47,20 @@ public:
      *         Other values refer to ESPTool::run_esptool(int, char**)
      */
     static int read_flash(uint32_t address, uint32_t size, std::string filename);
+
+    /**
+     * @brief Equivalent of 'esptool.py write_flash address filename'
+     * 
+     * @details Writes an image to ESP flash.
+     * 
+     * @param address  Start address to write
+     * @param filename Input file name
+     * 
+     * @return 0 if success
+     *         1 if esptool.py not found
+     *         Other values refer to ESPTool::run_esptool(int, char**)
+     */
+    static int write_flash(uint32_t address, std::string filename);
 
     /**
      * @brief Returns the last error message
