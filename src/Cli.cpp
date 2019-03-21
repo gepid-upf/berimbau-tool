@@ -46,6 +46,9 @@ int Cli::run(int &argc, char *argv[])
     case Option::DUMP:
         ret = dump_flash();
         break;
+    case Option::EXPORT:
+        ret = export_rec();
+        break;
     default:
         ret = -4;
         break;
@@ -65,6 +68,8 @@ int Cli::parse_args(int &argc, char *argv[])
         opt = Option::CREATE;
     } else if(!strcmp(argv[1], "dump")){
         opt = Option::DUMP;
+    } else if(!strcmp(argv[1], "export")){
+        opt = Option::EXPORT;
     } else {
         std::cout << "Opção desconhecida!" << std::endl << std::endl;
         print_usage();
@@ -72,7 +77,7 @@ int Cli::parse_args(int &argc, char *argv[])
     }
     
 
-    if(opt == Option::CREATE){
+    if(opt == Option::CREATE || opt == Option::EXPORT){
         if(argc != 3){
             std::cout << "Necessário informar arquivo de entrada" << std::endl << std::endl;
             print_usage();
@@ -131,10 +136,48 @@ int Cli::dump_flash()
     int ret = BerimbauTool::dump();
     switch(ret){
     case 0:
-        std::cout << std::endl << "Imagem gravada" << std::endl;
+        std::cout << std::endl << "Memória descompactada em ./img/" << std::endl;
+        break;
+    // esptool errors
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+        std::cout << std::endl << "Erro: " << ESPTool::get_err_msg() << std::endl;
+        break;
+    case 6:
+        std::cout << std::endl << "Erro ao esperar mkspiffs" << std::endl;
+        break;
+    case 0xFF:
+        std::cout << std::endl << "mkspiffs não encontrado" << std::endl;
+        break;
+    // mkspiffs errors
+    default:
+        std::cout << std::endl << "Erro no mkspiffs" << std::endl;
+        break;
+    }
+
+    return ret;
+}
+
+int Cli::export_rec()
+{
+    int ret = BerimbauTool::merge(fname);
+    switch(ret){
+    case 0:
+        std::cout << "Arquivo " << fname << " copiado para exportação" << std::endl;
+        break;
+    case 1:
+        std::cout << "Arquivo de entrada inválido" << std::endl;
+        break;
+    case 2:
+        std::cout << "Imagem para exportação não presente. Execute 'berimbau-tool dump'" << std::endl;
+        break;
+    case 3:
+        std::cout << "Erro ao copiar arquivo" << std::endl;
         break;
     default:
-        std::cout << std::endl << "Erro: " << ESPTool::get_err_msg() << std::endl;
+        std::cout << "Erro desconhecido" << std::endl;
         break;
     }
 

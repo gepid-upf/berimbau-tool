@@ -93,13 +93,28 @@ public:
      * @brief Dumps the whole flash SPIFFS partition to ./img/
      * 
      * @return 0 if success
+     *         6 if wait for mkspiffs error
+     *         0xF0 added to mkspiffs exit code if error in the child process.
+     *         255 if no mkspiffs found.
      *         Refer to ESPTool::read_flash(int, char**) for errors.
      */
     static int dump();
 
+    /**
+     * @brief Exports .dat rec to img folder.
+     * 
+     * @param filename The name of the .dat recording.
+     * 
+     * @return 0 if success.
+     *         1 if invalid file name
+     *         2 if image not present
+     *         3 if could not copy
+     */
+    static int merge(std::string filename);
+
 private:
     static const uint32_t START_ADDR = 0x210000;
-    static const uint32_t PART_SIZE  = 0x1effff;
+    static const uint32_t PART_SIZE  = 0x1f0000;
 
     static unsigned int line_no;
     static std::string line_value;

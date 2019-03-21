@@ -18,21 +18,20 @@ CFLAGS := -g -Wall -std=c++17
 LDFLAGS := -lstdc++fs -lpython2.7
 INCLUDES := -I./$(SRCDIR)/include -std=c++17
 
-all: $(TARGET) mkspiffs cpmkspiffs
+all: $(TARGET) cpmkspiffs
 
-mkspiffs:
-	@echo "Building mkspiffs"
-	@make -C mkspiffs/make dist
-
-cpmkspiffs:
+cpmkspiffs: libmkspiffs
 	@echo "Copying spiffs to binary folder"
 	@$(MK) -p $(EXECDIR)
 	@$(CP) mkspiffs/mkspiffs $(EXECDIR)/mkspiffs
 
+libmkspiffs:
+	@make -C mkspiffs
+
 buildrun: all
 	./$(TARGET)
 
-run:
+run: cpmkspiffs
 	./$(TARGET)
 
 $(TARGET): $(OBJECTS)
@@ -48,6 +47,6 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 clean:
 	@echo "Cleaning..."
 	@$(RM) -rf $(BUILDDIR) $(EXECDIR) $(SHAREDIR)
-	@$(RM) mkspiffs/mkspiffs
+	@make -C mkspiffs clean
 
 .PHONY: clean

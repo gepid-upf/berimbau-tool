@@ -48,7 +48,8 @@ private:
      */
     enum class Option {
         CREATE,
-        DUMP
+        DUMP,
+        EXPORT
     };
 
     static Option opt;
@@ -88,6 +89,14 @@ private:
      *         Refer to BerimbauTool::dump() for error codes.
      */
     static int dump_flash();
+
+    /**
+     * @brief Exports a created .dat rec to img folder, merging with dumped image.
+     * 
+     * @return 0 if success.
+     *         Refer to BerimbauTool::merge() for error codes.
+     */
+    static int export_rec();
 
 };
 
