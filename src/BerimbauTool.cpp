@@ -24,7 +24,7 @@
  */
 
 #include <BerimbauTool.h>
-#include <Utils.h>
+#include <Util.h>
 #include <esptool.h>
 
 #include <fstream>
@@ -53,13 +53,13 @@ int BerimbauTool::create(std::string &fname)
         if(line.c_str()[0] == '#')
             continue;
 
-        std::vector<std::string> col = Utils::str_explode(line, ',');
+        std::vector<std::string> col = Util::String::explode(line, ',');
         if(col.size() != 2){
             file.close();
             return 2;    // Invalid column number
         }
         
-        if(!Utils::str_is_integer(col[0])){
+        if(!Util::String::is_integer(col[0])){
             file.close();
             line_value = col[0];
             return 3;   // First column not integer
@@ -90,9 +90,9 @@ int BerimbauTool::create(std::string &fname)
 
     std::ostringstream oss;
 
-    std::vector<std::string> path = Utils::str_explode(fname, '/'); // Linux
+    std::vector<std::string> path = Util::String::explode(fname, '/'); // Linux
 
-    std::string name = Utils::str_explode(path[path.size() -1], '.')[0]; // Remove extension
+    std::string name = Util::String::explode(path[path.size() -1], '.')[0]; // Remove extension
 
     oss << "./recs/" << name << ".dat";
     
@@ -152,7 +152,7 @@ int BerimbauTool::flash()
                     "partition.bin", nullptr };
 
     int ret = 0;
-    if((ret = Utils::call_and_wait(argv)))
+    if((ret = Util::System::call_and_wait(argv)))
         return ret;
 
     return ESPTool::write_flash(START_ADDR, "partition.bin");
