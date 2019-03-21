@@ -26,6 +26,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+#include <Python.h>
+
 // http://www.cplusplus.com/articles/2wA0RXSz/
 const std::vector<std::string> Util::String::explode(const std::string& str, const char& separator)
 {
@@ -68,4 +70,53 @@ int Util::System::call_and_wait(char *argv[])
        
         return WEXITSTATUS(status);
     }
+}
+
+std::string Util::Python::err_msg;
+
+int Util::Python::call_funct(std::string module, std::string funct, int argc, char *argv[])
+{
+    Py_Initialize();
+
+    PySys_SetArgv(argc, argv); // Sets esptool.py path and args
+
+    // Import whole esptool.py
+    PyObject *src = PyString_FromString(module.c_str());
+    PyObject *mod = PyImport_Import(src);
+    if(!mod){
+        PyObject *type, *value, *tb;
+        PyErr_Fetch(&type, &value, &tb);
+        err_msg = PyString_AS_STRING(value);
+        return 2;
+    }
+
+    // Get context from module
+    PyObject *dict = PyModule_GetDict(mod);
+    if(!dict){
+        PyObject *type, *value, *tb;
+        PyErr_Fetch(&type, &value, &tb);
+        err_msg = PyString_AS_STRING(value);
+        return 3;
+    }
+
+    // Get function from context
+    PyObject *func = PyDict_GetItemString(dict, funct.c_str());
+
+    if (!PyCallable_Check(func)){
+        err_msg = "Impossível chamar função";
+        return 4;
+    }
+
+    PyObject_CallObject(func, NULL);
+
+    if(PyErr_Occurred()){
+        PyObject *type, *value, *tb;
+        PyErr_Fetch(&type, &value, &tb);
+        err_msg = PyString_AS_STRING(PyObject_Str(value));
+        return 5;
+    }
+
+    Py_Finalize();
+
+    return 0;
 }

@@ -16,7 +16,7 @@ SOURCES := $(wildcard $(SRCDIR)/*.$(SRCEXT))
 OBJECTS := $(addprefix $(BUILDDIR)/,$(notdir $(SOURCES:.$(SRCEXT)=.o)))
 CFLAGS := -g -Wall -std=c++17
 LDFLAGS := -lstdc++fs -lpython2.7
-INCLUDES := -I./$(SRCDIR)/include -std=c++17
+INCLUDES := -I./$(SRCDIR)/include -std=c++17 -I/usr/include/python2.7
 
 all: $(TARGET) cpmkspiffs
 

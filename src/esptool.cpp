@@ -26,11 +26,11 @@
  */
 
 #include <esptool.h>
+#include <Util.h>
+
 #include <python2.7/Python.h>
 #include <cstdlib>
 #include <sstream>
-
-#include <iostream>
 
 std::string ESPTool::err_msg;
 
@@ -67,7 +67,9 @@ int ESPTool::read_flash(uint32_t address, uint32_t size, std::string filename)
     strcpy(argv[3], std::to_string(size).c_str());
     strcpy(argv[4], filename.c_str());
 
-    return run_esptool(5, argv);
+    int ret = Util::Python::call_funct("esptool", "main", 5, argv);
+    err_msg = Util::Python::get_last_err();
+    return ret;
 }
 
 int ESPTool::write_flash(uint32_t address, std::string filename)
@@ -90,52 +92,7 @@ int ESPTool::write_flash(uint32_t address, std::string filename)
     strcpy(argv[2], std::to_string(address).c_str());
     strcpy(argv[3], filename.c_str());
 
-    return run_esptool(4, argv);
-}
-
-int ESPTool::run_esptool(int argc, char *argv[])
-{
-    Py_Initialize();
-
-    PySys_SetArgv(argc, argv); // Sets esptool.py path and args
-
-    // Import whole esptool.py
-    PyObject *src = PyString_FromString("esptool");
-    PyObject *mod = PyImport_Import(src);
-    if(!mod){
-        PyObject *type, *value, *tb;
-        PyErr_Fetch(&type, &value, &tb);
-        err_msg = PyString_AS_STRING(value);
-        return 2;
-    }
-
-    // Get context from module
-    PyObject *dict = PyModule_GetDict(mod);
-    if(!dict){
-        PyObject *type, *value, *tb;
-        PyErr_Fetch(&type, &value, &tb);
-        err_msg = PyString_AS_STRING(value);
-        return 3;
-    }
-
-    // Get function from context
-    PyObject *func = PyDict_GetItemString(dict, "main");
-
-    if (!PyCallable_Check(func)){
-        err_msg = "Impossível chamar função";
-        return 4;
-    }
-
-    PyObject_CallObject(func, NULL);
-
-    if(PyErr_Occurred()){
-        PyObject *type, *value, *tb;
-        PyErr_Fetch(&type, &value, &tb);
-        err_msg = PyString_AS_STRING(PyObject_Str(value));
-        return 5;
-    }
-
-    Py_Finalize();
-
-    return 0;
+    int ret = Util::Python::call_funct("esptool", "main", 4, argv);
+    err_msg = Util::Python::get_last_err();
+    return ret;
 }

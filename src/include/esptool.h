@@ -44,7 +44,7 @@ public:
      * 
      * @return 0 if success
      *         1 if esptool.py not found
-     *         Other values refer to ESPTool::run_esptool(int, char**)
+     *         Other values refer to Util::Python::call_funct
      */
     static int read_flash(uint32_t address, uint32_t size, std::string filename);
 
@@ -58,7 +58,7 @@ public:
      * 
      * @return 0 if success
      *         1 if esptool.py not found
-     *         Other values refer to ESPTool::run_esptool(int, char**)
+     *         Other values refer to Util::Python::call_funct
      */
     static int write_flash(uint32_t address, std::string filename);
 
@@ -72,23 +72,7 @@ public:
 
 private:
     static std::string err_msg;
-    static std::string get_esptool();
-
-    /**
-     * @brief Runs the esptool.py as if were from command line
-     * 
-     * @param argc The argument count as if were called from command line
-     * @param argv The set of char arrays as arguments.
-     *             The first argument must be the full path to esptool.py
-     *
-     * @return 0 if success
-     *         2 if could not import module
-     *         3 if could not set context
-     *         4 if could not call function
-     *         5 if code execution error. Also sets err_msg
-     */
-    static int run_esptool(int argc, char *argv[]);
-    
+    static std::string get_esptool();    
 };
 
 #endif /* _ESPTOOL_H_ */

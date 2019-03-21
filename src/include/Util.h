@@ -31,6 +31,7 @@
 namespace Util {
     class String;
     class System;
+    class Python;
 };
 
 class Util::String {
@@ -69,6 +70,37 @@ public:
      *         Return code of the program executed.
      */
     static int call_and_wait(char *argv[]);
+};
+
+class Util::Python {
+public:
+    /**
+     * @brief Calls a Python function from a module.
+     * 
+     * @param module  The module name (usually the .py file without the extension)
+     * @param funct   The function to call.
+     * @param argc    The argument count to pass.
+     * @param *argv[] The set of arguments to pass to the file.
+     *                Usually the first should be the .py file path.
+     *                The last does NOT need to be nullptr.
+     * 
+     * @return 0 if success.
+     *         2 if could not import module.
+     *         3 if could not import file env.
+     *         4 if could not find function.
+     *         5 if code execution error. Sets err_msg to last exception raised.
+     */
+    static int call_funct(std::string module, std::string funct, int argc, char *argv[]);
+
+    /**
+     * @brief Gets the last error message set by Python program.
+     * 
+     * @return The error String.
+     */
+    static std::string get_last_err() { return err_msg; }
+
+private:
+    static std::string err_msg;
 };
 
 #endif /* _UTILS_H_ */
