@@ -123,6 +123,27 @@ public:
      */
     static int flash();
 
+    /**
+     * @brief Copies the log dumped from ESP32.
+     * 
+     * @param path The path to move the log folder to.
+     * 
+     * @return 0 if success.
+     *         1 if no dump available.
+     *         2 if no log in the dump.
+     *         3 fail to copy.
+     */
+    static int log(std::string path);
+
+    /**
+     * @brief Clean temporary image files.
+     * 
+     * @return 0 if success.
+     *         1 if nothing to clean.
+     *         2 if unable to delete.
+     */
+    static int clean();
+
 private:
     static const uint32_t START_ADDR = 0x210000;
     static const uint32_t PART_SIZE  = 0x1f0000;

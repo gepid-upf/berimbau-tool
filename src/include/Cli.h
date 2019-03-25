@@ -50,7 +50,8 @@ private:
         CREATE,
         DUMP,
         EXPORT,
-        FLASH
+        FLASH,
+        LOGS
     };
 
     static Option opt;
@@ -106,6 +107,14 @@ private:
      *         Refer to BerimbauTool::flash() for error codes.
      */
     static int flash_esp();
+
+    /**
+     * @brief Move the logs dumped from ESP32.
+     * 
+     * return 0 if success.
+     *        Refer to BerimbauTool::log()
+     */
+    static int mv_log();
 };
 
 #endif /* _CLI_H_ */

@@ -52,6 +52,9 @@ int Cli::run(int &argc, char *argv[])
     case Option::FLASH:
         ret = flash_esp();
         break;
+    case Option::LOGS:
+        ret = mv_log();
+        break;
     default:
         ret = -4;
         break;
@@ -75,6 +78,8 @@ int Cli::parse_args(int &argc, char *argv[])
         opt = Option::EXPORT;
     } else if(!strcmp(argv[1], "flash")){
         opt = Option::FLASH;
+    } else if(!strcmp(argv[1], "logs")) {
+        opt = Option::LOGS;
     } else {
         std::cout << "Opção desconhecida!" << std::endl << std::endl;
         print_usage();
@@ -82,9 +87,9 @@ int Cli::parse_args(int &argc, char *argv[])
     }
     
 
-    if(opt == Option::CREATE || opt == Option::EXPORT){
+    if(opt == Option::CREATE || opt == Option::EXPORT || opt == Option::LOGS){
         if(argc != 3){
-            std::cout << "Necessário informar arquivo de entrada" << std::endl << std::endl;
+            std::cout << "Necessário informar arquivo de entrada/saída" << std::endl << std::endl;
             print_usage();
             return -3;
         } else {
@@ -198,6 +203,29 @@ int Cli::flash_esp()
         break;
     default:
         std::cout << std::endl << "Erro: " << ESPTool::get_err_msg() << std::endl;
+        break;
+    }
+
+    return ret;
+}
+
+int Cli::mv_log()
+{
+    int ret = BerimbauTool::log(fname);
+    switch(ret){
+    case 0:
+        std::cout << std::endl << "Log salvo em " << fname << std::endl;
+        break;
+    case 1:
+        std::cout << std::endl << "Nenhum dump encontrado" << std::endl;
+        break;
+    case 2:
+        std::cout << std::endl << "Nenhum log para ser copiado no dump" << std::endl;
+        break;
+    case 3:
+        std::cout << std::endl << "Falha ao copiar logs" << std::endl;
+        break;
+    default:
         break;
     }
 

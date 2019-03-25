@@ -136,7 +136,7 @@ int BerimbauTool::merge(std::string filename)
         return 3;
     }
 
-    return 0;       
+    return 0;
 }
 
 int BerimbauTool::flash()
@@ -156,4 +156,36 @@ int BerimbauTool::flash()
         return ret;
 
     return ESPTool::write_flash(START_ADDR, "partition.bin");
+}
+
+int BerimbauTool::log(std::string path)
+{
+    if(!std::filesystem::exists("./img"))
+        return 1;
+
+    if(!std::filesystem::exists("./img/logs"))
+        return 2;
+
+    if(!std::filesystem::exists(path))
+        std::filesystem::create_directory(path);
+    
+    try {
+        std::filesystem::copy("./img/logs", path, std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive);
+    } catch(std::exception &ex){
+        return 3;
+    }
+
+    return 0;
+}
+
+int BerimbauTool::clean()
+{
+    if(!std::filesystem::exists("./img"))
+        return 1;
+
+    try {
+        std::filesystem::remove_all("./img");
+    } catch(...){
+        return 2;
+    }
 }
