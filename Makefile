@@ -26,7 +26,7 @@ cpmkspiffs: libmkspiffs
 	@$(CP) mkspiffs/mkspiffs $(EXECDIR)/mkspiffs
 
 libmkspiffs:
-	@make -C mkspiffs
+	@make dist -C mkspiffs BUILD_CONFIG_NAME="-esp-idf" CPPFLAGS="-DSPIFFS_OBJ_META_LEN=4"
 
 buildrun: all
 	./$(TARGET)
