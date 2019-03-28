@@ -2,4 +2,6 @@
 bin/
 build/
 recs/
+img/
+logs/
 partition.bin
