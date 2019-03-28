@@ -120,7 +120,7 @@ int Cli::create_rec()
     int ret = 0;
     switch((ret = BerimbauTool::create(fname))){
     case 0:
-        std::cout << "Arquivo criado em /local/recs/" << fname << std::endl;
+        std::cout << "Arquivo criado em /local/recs/" << fname.substr(0, fname.length()-4) << ".dat" << std::endl;
         break;    
     case 1:
         std::cout << "Arquivo " << fname << " não existente." << std::endl;

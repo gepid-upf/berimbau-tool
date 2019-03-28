@@ -115,8 +115,17 @@ int BerimbauTool::dump()
     if((ret = ESPTool::read_flash(START_ADDR, PART_SIZE, "partition.bin")))
         return ret;
 
+    char buffer[10];
+    strcpy(buffer, std::to_string(PART_SIZE).c_str());
 
-    return ret;
+    char *argv[] = {"./bin/mkspiffs",
+                    "-u", "./img",
+                    "-b", "4096",
+                    "-p", "256",
+                    "-s", buffer,
+                    "partition.bin", nullptr };
+
+    return Util::System::call_and_wait(argv);
 }
 
 int BerimbauTool::merge(std::string filename)
