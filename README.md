@@ -1,6 +1,6 @@
 # berimbau-tool
 
-berimbau-tool is a software for creating recordings for the berimbau-esp32 based on a .csv input file, dumping recordings from the [berimbau-esp32](https://github.com/aedalzotto/berimbau-esp32) and recovering its logs.
+berimbau-tool is a software for creating recordings for the berimbau-esp32 based on a .csv input file, dumping recordings from the [berimbau-esp32](https://github.com/gepid-upf/berimbau-esp32) and recovering its logs.
 
 ## Built with
 
